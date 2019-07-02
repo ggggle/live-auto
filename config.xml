@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<piece_size des="单个文件大小，单位MB">2048</piece_size>
+	<proxy des="代理设置">http://127.0.0.1:1080</proxy>
+</config>
