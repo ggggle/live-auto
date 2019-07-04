@@ -8,9 +8,12 @@ import (
 )
 
 type downloader struct {
-	url          string
+	// 直播流URL
+	url string
+	// 保存位置
 	liveFilePath string
-	needFFmpeg   bool
+	// 是否使用ffmpeg
+	needFFmpeg bool
 }
 
 func NewDownloader(url, filePath string) *downloader {
@@ -41,7 +44,7 @@ func (self *downloader) Start() {
 	go func() {
 		for true {
 			t, err := resp.Body.Read(buffer)
-			fmt.Println(t)
+			// fmt.Println(t)
 			if t > 0 {
 				if _, err := f_handle.Write(buffer[:t]); nil != err {
 					fmt.Println(err)

@@ -5,22 +5,23 @@ import (
 	"github.com/hr3lxphr6j/bililive-go/src/api"
 	"live-auto/src"
 	"net/url"
+	"time"
 )
 
 func main() {
-	err := src.ReadConfig("./config.xml")
-	if nil != err {
-		fmt.Println(err.Error())
-		return
-	}
-	fmt.Println(src.G_Config)
-	u, _ := url.Parse("https://www.douyu.com/265438")
+	fmt.Println("main")
+
+	src.Logger.Error("123")
+	time.Sleep(time.Second)
+	src.Logger.Error("222")
+	return
+	u, _ := url.Parse("https://www.douyu.com/233233")
 	live, err := api.NewLive(u)
 	if nil != err {
-		fmt.Println(err)
+		src.Logger.Error(err.Error())
 		return
 	}
 	l, err := live.GetStreamUrls()
-	download := src.NewDownloader(l[0].String(), "./小缘/123.flv")
+	download := src.NewDownloader(l[0].String(), "./test/123.flv")
 	download.Start()
 }
