@@ -10,11 +10,11 @@ import (
 var G_Config *Config
 
 type Config struct {
-	PieceSize int    `xml:"piece_size"`
+	PieceSize int64  `xml:"piece_size"`
 	Proxy     string `xml:"proxy"`
 }
 
-func ReadConfig(configFilePath string)  error {
+func ReadConfig(configFilePath string) error {
 	content_b, err := ioutil.ReadFile(configFilePath)
 	if nil != err {
 		return errors.New(fmt.Sprintf("open[%s]file error, %s", configFilePath, err.Error()))
@@ -24,5 +24,6 @@ func ReadConfig(configFilePath string)  error {
 	if nil != err {
 		return err
 	}
+	G_Config.PieceSize *= 1024 * 1024
 	return nil
 }

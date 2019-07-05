@@ -9,6 +9,8 @@ import (
 
 var Logger *logrus.Logger
 
+const ERROR_CONTENT_DEF = "err_content"
+
 func InitLogger() {
 	fmt.Println("init log")
 	logFileName := time.Now().Format("./log/20060102-150405.log")
