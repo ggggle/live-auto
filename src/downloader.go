@@ -7,11 +7,13 @@ import (
 	"net/http"
 )
 
+type DownloadCBCodeType int
+
 // downloader返回值定义
 const (
-	NORMAL_END  = iota // 通常的情况  live流中断、结束
-	WRITE_ERROR        // 写入硬盘错误 空间满了
-	NEXT_PIECE         // 单片段达到大小上限
+	NORMAL_END  DownloadCBCodeType = iota // 通常的情况  live流中断、结束
+	WRITE_ERROR                           // 写入硬盘错误 空间满了
+	NEXT_PIECE                            // 单片段达到大小上限
 	UNSTART_ERROR
 	STOP_SELF // 主动停止
 )
@@ -25,11 +27,11 @@ type downloader struct {
 	needFFmpeg bool
 	CBChannel  chan downloadCB_t
 	// 停止
-	stop bool
+	Stop bool
 }
 
 type downloadCB_t struct {
-	code int
+	Code DownloadCBCodeType
 }
 
 func NewDownloader(url, filePath string) *downloader {
@@ -38,8 +40,8 @@ func NewDownloader(url, filePath string) *downloader {
 			url:          url,
 			liveFilePath: filePath,
 			needFFmpeg:   false,
-			CBChannel:    make(chan downloadCB_t),
-			stop:         false,
+			CBChannel:    make(chan downloadCB_t, 1),
+			Stop:         false,
 		}
 	}
 	return nil
@@ -47,7 +49,7 @@ func NewDownloader(url, filePath string) *downloader {
 
 func (self *downloader) Start() bool {
 	download_cb := downloadCB_t{
-		code: NORMAL_END,
+		Code: NORMAL_END,
 	}
 	// 通知结果
 	defer func() {
@@ -59,7 +61,7 @@ func (self *downloader) Start() bool {
 			ERROR_CONTENT_DEF: err.Error(),
 			"url":             self.url,
 		}).Error("下载错误")
-		download_cb.code = UNSTART_ERROR
+		download_cb.Code = UNSTART_ERROR
 		return false
 	}
 	defer resp.Body.Close()
@@ -69,14 +71,14 @@ func (self *downloader) Start() bool {
 			ERROR_CONTENT_DEF: err.Error(),
 			"file_path":       self.liveFilePath,
 		}).Error("创建本地文件错误")
-		download_cb.code = UNSTART_ERROR
+		download_cb.Code = UNSTART_ERROR
 		return false
 	}
 	defer f_handle.Close()
 	buffer := make([]byte, bytes.MinRead)
 	once_end := make(chan struct{})
 	go func() {
-		for !self.stop {
+		for !self.Stop {
 			t, err := resp.Body.Read(buffer)
 			if t > 0 {
 				if _, err := f_handle.Write(buffer[:t]); nil != err {
@@ -84,7 +86,7 @@ func (self *downloader) Start() bool {
 					Logger.WithFields(logrus.Fields{
 						ERROR_CONTENT_DEF: err.Error(),
 					}).Error("直播文件写入错误")
-					download_cb.code = WRITE_ERROR
+					download_cb.Code = WRITE_ERROR
 					break
 				}
 				if G_Config.PieceSize > 0 {
@@ -92,7 +94,7 @@ func (self *downloader) Start() bool {
 						Logger.WithFields(logrus.Fields{
 							"file_size": file_info.Size(),
 						}).Info("切片存储")
-						download_cb.code = NEXT_PIECE
+						download_cb.Code = NEXT_PIECE
 						break
 					}
 				}
@@ -105,8 +107,8 @@ func (self *downloader) Start() bool {
 				break
 			}
 		}
-		if self.stop {
-			download_cb.code = STOP_SELF
+		if self.Stop {
+			download_cb.Code = STOP_SELF
 		}
 		once_end <- struct{}{}
 	}()

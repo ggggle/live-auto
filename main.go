@@ -2,25 +2,23 @@ package main
 
 import (
 	"fmt"
-	"github.com/hr3lxphr6j/bililive-go/src/api"
 	"live-auto/src"
-	"net/url"
 )
 
 func main() {
+/*	path := filepath.Join("./中文", "test")
+	fmt.Println(path)
+	os.MkdirAll(path, os.ModePerm)
+	return*/
+	fmt.Println(src.G_Config)
 	// defer src.Logger.Exit(0)
-	u, _ := url.Parse("https://www.douyu.com/2550505")
-	live, err := api.NewLive(u)
+	recorder, err := src.NewRecorder("https://www.douyu.com/74751", src.RecordConfig{
+		Loop: true,
+	})
 	if nil != err {
-		src.Logger.Error(err.Error())
+		fmt.Println(err)
 		return
 	}
-	l, err := live.GetStreamUrls()
-	download := src.NewDownloader(l[0].String(), "./test/123.flv")
-	go download.Start()
-	select {
-	case cb_t := <-download.CBChannel:
-		fmt.Println(cb_t)
-	}
-	fmt.Println("main")
+	recorder.Start()
+	select {}
 }
