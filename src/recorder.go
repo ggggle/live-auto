@@ -12,16 +12,19 @@ import (
 
 type Recorder struct {
 	RecordConfig
-	Live api.Live
-	Stop chan struct{}
+	Live      api.Live
+	Stop      chan struct{}
+	Uploaders []Uploader
 }
 
 type RecordConfig struct {
 	// 循环
 	Loop bool
 	// TODO
-	BeginTime int
-	EndTime   int
+	BeginTime       int
+	EndTime         int
+	EnableUploaders []UploaderType
+	AutoRemove      bool // 上传成功后删除本地文件
 }
 
 func NewRecorder(live_url string, config RecordConfig) (*Recorder, error) {
@@ -33,25 +36,32 @@ func NewRecorder(live_url string, config RecordConfig) (*Recorder, error) {
 	if nil != err {
 		return nil, err
 	}
-	return &Recorder{
+	recorder := Recorder{
 		Live:         live,
 		RecordConfig: config,
 		Stop:         make(chan struct{}, 1),
-	}, nil
+		Uploaders:    make([]Uploader, 0),
+	}
+	for _, _type := range recorder.EnableUploaders {
+		recorder.Uploaders = append(recorder.Uploaders, NewUploader(_type))
+	}
+	return &recorder, nil
 }
 
 func (self *Recorder) Start() {
 	go self.run()
-	Logger.WithFields(self.Live.GetInfoMap()).Info("Record Start")
+	Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Start")
 }
 
 func (self *Recorder) run() {
 	for {
 		info, err := self.Live.GetInfo()
 		if nil != err || !info.Status {
+			// 未开播
 			time.Sleep(time.Duration(G_Config.CheckInterval) * time.Second)
 			continue
 		}
+		// 开播后获取直播流
 		urls, err := self.Live.GetStreamUrls()
 		if nil != err || 0 == len(urls) {
 			Logger.WithFields(logrus.Fields{
@@ -70,6 +80,7 @@ func (self *Recorder) run() {
 			live_file_path = filepath.Join(outputPath, fileName)
 			live_url       = urls[0]
 		)
+		Logger.WithFields(self.Live.GetInfoMap()).Info("直播开始录制")
 		downloader := NewDownloader(live_url.String(), live_file_path)
 		go downloader.Start()
 		select {
@@ -78,11 +89,32 @@ func (self *Recorder) run() {
 			case STOP_SELF, WRITE_ERROR, UNSTART_ERROR:
 				return
 			default:
-				continue
+				self.doUpload(live_file_path)
+				if self.Loop {
+					continue
+				} else {
+					return
+				}
 			}
 		case <-self.Stop:
+			Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Stop")
 			downloader.Stop = true
+			// 主动停止 等待下载协程返回后处理上传
+			select {
+			case <-downloader.CBChannel:
+				self.doUpload(live_file_path)
+			}
+			Logger.WithFields(self.Live.GetInfoMap()).Debug("停止结束")
 			return
+		}
+	}
+
+}
+
+func (self *Recorder) doUpload(file_path string) {
+	for i := range self.Uploaders {
+		if nil != self.Uploaders[i] {
+			go self.Uploaders[i].DoUpload(file_path)
 		}
 	}
 }

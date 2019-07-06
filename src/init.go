@@ -11,4 +11,5 @@ func init() {
 		os.Exit(-1)
 	}
 	InitLogger()
+	InitGDrive()
 }
