@@ -69,7 +69,7 @@ func (self *recorderMngrImpl) GetAllRecorder() []*Recorder {
 	self.rwlock.RLock()
 	defer self.rwlock.RUnlock()
 	list := make([]*Recorder, 0)
-	for _, v := range self.recordersMap{
+	for _, v := range self.recordersMap {
 		list = append(list, v)
 	}
 	return list

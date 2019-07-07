@@ -71,9 +71,9 @@ func remove() {
 	}
 }
 
-func list()  {
+func list() {
 	list := src.GetIRecorderMngr().GetAllRecorder()
-	for _, rcd := range list{
+	for _, rcd := range list {
 		fmt.Printf("%s %s\n", rcd.Live.GetLiveId(), rcd.Live.GetRawUrl())
 	}
 }

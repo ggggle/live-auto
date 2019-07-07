@@ -60,6 +60,7 @@ func (self *Recorder) Start() {
 
 func (self *Recorder) Stop() {
 	Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Stop")
+	self.Loop = false
 	self.stop <- struct{}{}
 }
 
@@ -93,28 +94,25 @@ func (self *Recorder) run() {
 		Logger.WithFields(self.Live.GetInfoMap()).Info("直播开始录制")
 		downloader := NewDownloader(live_url.String(), live_file_path)
 		go downloader.Start()
+	SELECT:
 		select {
 		case cb_t := <-downloader.CBChannel:
-			switch cb_t.Code {
-			case STOP_SELF, WRITE_ERROR, UNSTART_ERROR:
+			Logger.WithFields(logrus.Fields{
+				"cb_code": cb_t.Code,
+			}).Debug("download return")
+			self.doUpload(live_file_path)
+			if WRITE_ERROR == cb_t.Code {
+				self.Loop = false
+			}
+			if self.Loop {
+				continue
+			} else {
 				return
-			default:
-				self.doUpload(live_file_path)
-				if self.Loop {
-					continue
-				} else {
-					return
-				}
 			}
 		case <-self.stop:
 			downloader.Stop = true
 			// 主动停止 等待下载协程返回后处理上传
-			select {
-			case <-downloader.CBChannel:
-				self.doUpload(live_file_path)
-			}
-			Logger.WithFields(self.Live.GetInfoMap()).Debug("停止结束")
-			return
+			goto SELECT
 		}
 	}
 

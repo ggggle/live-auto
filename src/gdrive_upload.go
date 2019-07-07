@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -13,6 +14,8 @@ var (
 	GDRIVE_ROOT_DIR    = "LiveAuto" // 所有上传所在根目录
 	GDRIVE_ROOT_DIR_ID = ""         // 查询出来的根目录ID
 )
+
+const MIN_UPLOAD_FILE_SIZE int64 = 1024 * 256 // 最小上传大小
 
 type GDriveUploader struct {
 	parentDirID string
@@ -36,6 +39,9 @@ func (self *GDriveUploader) DoUpload(file_path string) {
 	}
 	// 或者直接上传至根目录里？
 	if "" == self.parentDirID {
+		return
+	}
+	if file_info, err := os.Stat(file_path); nil != err || file_info.Size() < MIN_UPLOAD_FILE_SIZE {
 		return
 	}
 	Logger.WithFields(logrus.Fields{

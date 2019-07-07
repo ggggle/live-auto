@@ -100,10 +100,12 @@ func (self *downloader) Start() bool {
 				}
 			}
 			// io.EOF直播流到结尾 可能真的结束了或者网络波动导致流断开
-			if nil != err && io.EOF != err {
-				Logger.WithFields(logrus.Fields{
-					ERROR_CONTENT_DEF: err.Error(),
-				}).Info("直播流中断")
+			if nil != err {
+				if io.EOF != err {
+					Logger.WithFields(logrus.Fields{
+						ERROR_CONTENT_DEF: err.Error(),
+					}).Info("直播流中断")
+				}
 				break
 			}
 		}
