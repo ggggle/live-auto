@@ -13,8 +13,9 @@ import (
 type Recorder struct {
 	RecordConfig
 	Live      api.Live
-	Stop      chan struct{}
+	stop      chan struct{}
 	Uploaders []Uploader
+	IndexID   int // 递增int标识
 }
 
 type RecordConfig struct {
@@ -39,18 +40,27 @@ func NewRecorder(live_url string, config RecordConfig) (*Recorder, error) {
 	recorder := Recorder{
 		Live:         live,
 		RecordConfig: config,
-		Stop:         make(chan struct{}, 1),
+		stop:         make(chan struct{}, 1),
 		Uploaders:    make([]Uploader, 0),
 	}
 	for _, _type := range recorder.EnableUploaders {
-		recorder.Uploaders = append(recorder.Uploaders, NewUploader(_type))
+		recorder.Uploaders = append(recorder.Uploaders, NewUploader(_type, &recorder))
 	}
+	Logger.WithFields(logrus.Fields{
+		"live_url": live_url,
+		"config":   config,
+	}).Info("Add Recorder")
 	return &recorder, nil
 }
 
 func (self *Recorder) Start() {
 	go self.run()
 	Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Start")
+}
+
+func (self *Recorder) Stop() {
+	Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Stop")
+	self.stop <- struct{}{}
 }
 
 func (self *Recorder) run() {
@@ -96,8 +106,7 @@ func (self *Recorder) run() {
 					return
 				}
 			}
-		case <-self.Stop:
-			Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Stop")
+		case <-self.stop:
 			downloader.Stop = true
 			// 主动停止 等待下载协程返回后处理上传
 			select {
@@ -111,6 +120,7 @@ func (self *Recorder) run() {
 
 }
 
+// 调用上传
 func (self *Recorder) doUpload(file_path string) {
 	for i := range self.Uploaders {
 		if nil != self.Uploaders[i] {

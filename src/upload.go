@@ -11,10 +11,12 @@ type Uploader interface {
 	DoUpload(file_path string)
 }
 
-func NewUploader(_type UploaderType) Uploader {
+func NewUploader(_type UploaderType, owner *Recorder) Uploader {
 	switch _type {
 	case GDRIVE:
-		return &GDriveUploader{}
+		return &GDriveUploader{
+			Recorder: owner,
+		}
 	default:
 		return nil
 	}

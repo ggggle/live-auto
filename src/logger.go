@@ -33,6 +33,6 @@ func InitLogger() {
 			}
 			os.Exit(i)
 		},
-		Level: logrus.InfoLevel,
+		Level: logrus.DebugLevel,
 	}
 }

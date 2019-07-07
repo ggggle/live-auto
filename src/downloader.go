@@ -113,6 +113,9 @@ func (self *downloader) Start() bool {
 		once_end <- struct{}{}
 	}()
 	<-once_end
+	Logger.WithFields(logrus.Fields{
+		"file_path": self.liveFilePath,
+	}).Debug("once_end")
 	return true
 }
 

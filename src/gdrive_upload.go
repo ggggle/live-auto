@@ -28,7 +28,7 @@ func (self *GDriveUploader) DoUpload(file_path string) {
 		self.parentDirID, _ = GetDirID(dirName)
 		// 创建目录重试次数
 		maxRetryTimes := 3
-		for err := error(nil); nil != err && "" == self.parentDirID && maxRetryTimes > 0; maxRetryTimes-- {
+		for err := error(nil); nil == err && "" == self.parentDirID && maxRetryTimes > 0; maxRetryTimes-- {
 			// 在ROOT目录基础上创建子目录
 			self.parentDirID, err = MakeDir(dirName, GDRIVE_ROOT_DIR_ID)
 			time.Sleep(time.Second)
@@ -48,16 +48,19 @@ func (self *GDriveUploader) DoUpload(file_path string) {
 		}
 		uploadArgs = append(uploadArgs, file_path)
 		cmd := exec.Command("gdrive", uploadArgs...)
-		w := bytes.NewBuffer(nil)
-		cmd.Stdout = w
+		stdout := bytes.NewBuffer(nil)
+		stderr := bytes.NewBuffer(nil)
+		cmd.Stdout = stdout
+		cmd.Stderr = stderr
 		err := cmd.Run()
-		if nil != err {
+		if nil != err && err.Error() != "exit status 1" {
 			Logger.WithFields(logrus.Fields{
 				ERROR_CONTENT_DEF: err.Error(),
+				"stderr":          stderr.String(),
 			}).Error("gdrive上传命令执行异常")
 			return
 		}
-		uploadRet := string(w.Bytes())
+		uploadRet := string(stdout.Bytes())
 		logEntry := Logger.WithFields(logrus.Fields{
 			"return":     uploadRet,
 			"left_times": uploadRetryTimes,
@@ -65,6 +68,7 @@ func (self *GDriveUploader) DoUpload(file_path string) {
 		// 上传成功
 		if strings.Contains(uploadRet, "Uploaded") {
 			logEntry.Info("gdrive上传成功")
+			break
 		} else {
 			if 0 == uploadRetryTimes {
 				logEntry.WithFields(logrus.Fields{
