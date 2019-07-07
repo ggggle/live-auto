@@ -3,14 +3,15 @@ package main
 import (
 	"fmt"
 	"live-auto/src"
+	"time"
 )
 
 func main() {
-	/*	path := filepath.Join("./中文", "test")
-		fmt.Println(path)
-		os.MkdirAll(path, os.ModePerm)
-		return*/
+
 	fmt.Println(src.G_Config)
+	fmt.Println(src.GetDirID("liveAuto"))
+	time.Sleep(time.Second)
+	return
 	// defer src.Logger.Exit(0)
 	recorder, err := src.NewRecorder("https://www.douyu.com/196", src.RecordConfig{
 		Loop:            true,

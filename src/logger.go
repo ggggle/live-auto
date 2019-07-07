@@ -3,6 +3,7 @@ package src
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
 	"time"
 )
@@ -20,7 +21,7 @@ func InitLogger() {
 		return
 	}
 	Logger = &logrus.Logger{
-		Out: logFile,
+		Out: io.MultiWriter(logFile, os.Stdout),
 		Formatter: &logrus.TextFormatter{
 			DisableColors:   true,
 			FullTimestamp:   true,

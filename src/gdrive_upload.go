@@ -25,12 +25,12 @@ func (self *GDriveUploader) DoUpload(file_path string) {
 	}
 	if "" == self.parentDirID {
 		dirName := self.generateDirName()
-		self.parentDirID, _ = getDirID(dirName)
+		self.parentDirID, _ = GetDirID(dirName)
 		// 创建目录重试次数
 		maxRetryTimes := 3
 		for err := error(nil); nil != err && "" == self.parentDirID && maxRetryTimes > 0; maxRetryTimes-- {
 			// 在ROOT目录基础上创建子目录
-			self.parentDirID, err = makeDir(dirName, GDRIVE_ROOT_DIR_ID)
+			self.parentDirID, err = MakeDir(dirName, GDRIVE_ROOT_DIR_ID)
 			time.Sleep(time.Second)
 		}
 	}
@@ -38,7 +38,9 @@ func (self *GDriveUploader) DoUpload(file_path string) {
 	if "" == self.parentDirID {
 		return
 	}
-
+	Logger.WithFields(logrus.Fields{
+		"file_path": file_path,
+	}).Info("gdrive开始上传")
 	for uploadRetryTimes := 5; uploadRetryTimes >= 0; uploadRetryTimes-- {
 		uploadArgs := []string{"upload", "-p", self.parentDirID}
 		if self.Recorder.AutoRemove {
@@ -85,21 +87,24 @@ func (self *GDriveUploader) generateDirName() string {
 		self.Recorder.Live.GetCachedInfo().HostName)
 }
 
-func getDirID(dir_name string) (dir_id string, err error) {
-	queryArg := fmt.Sprintf("gdrive list --query \"name='%s'\"", dir_name)
-	// 包含特殊字符 目前只找到这种调用方法
-	cmd := exec.Command("/bin/sh", "-c", queryArg)
-	w := bytes.NewBuffer(nil)
-	cmd.Stdout = w
+func GetDirID(dir_name string) (dir_id string, err error) {
+	queryArg := fmt.Sprintf("name='%s'", dir_name)
+	// listCmdLine := fmt.Sprintf("gdrive list --query name='%s'", dir_name)
+	cmd := exec.Command("gdrive", "list", "-q", queryArg)
+	stdout := bytes.NewBuffer(nil)
+	stderr := bytes.NewBuffer(nil)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
 	err = cmd.Run()
 	if nil != err {
 		Logger.WithFields(logrus.Fields{
 			ERROR_CONTENT_DEF: err.Error(),
-			"cmd":             queryArg,
+			"stderr":          string(stderr.String()),
+			"cmd":             cmd.Args,
 		}).Error("gdrive查询目录ID失败")
 		return
 	}
-	lines := strings.Split(string(w.Bytes()), "\n")
+	lines := strings.Split(stdout.String(), "\n")
 	if 1 == len(lines) {
 		return
 	}
@@ -119,7 +124,7 @@ func getDirID(dir_name string) (dir_id string, err error) {
 
 @dir_id  所创建目录的ID
 */
-func makeDir(dir_name string, parent_id ...string) (dir_id string, err error) {
+func MakeDir(dir_name string, parent_id ...string) (dir_id string, err error) {
 	var args []string
 	args = append(args, "mkdir")
 	if 0 == len(parent_id) {
@@ -130,16 +135,19 @@ func makeDir(dir_name string, parent_id ...string) (dir_id string, err error) {
 		args = append(args, dir_name)
 	}
 	cmd := exec.Command("gdrive", args...)
-	w := bytes.NewBuffer(nil)
-	cmd.Stdout = w
+	stdout := bytes.NewBuffer(nil)
+	stderr := bytes.NewBuffer(nil)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
 	err = cmd.Run()
 	if nil != err {
 		Logger.WithFields(logrus.Fields{
 			ERROR_CONTENT_DEF: err.Error(),
+			"stderr":          stderr.String(),
 			"args":            args,
 		}).Error("gdrive创建目录失败")
 	} else {
-		if respStrSplit := strings.Split(string(w.Bytes()), " "); len(respStrSplit) >= 2 {
+		if respStrSplit := strings.Split(stdout.String(), " "); len(respStrSplit) >= 2 {
 			dir_id = respStrSplit[1]
 		} else {
 			Logger.WithFields(logrus.Fields{
@@ -153,10 +161,10 @@ func makeDir(dir_name string, parent_id ...string) (dir_id string, err error) {
 func InitGDrive() {
 	// 查询应用根目录ID
 	go func() {
-		GDRIVE_ROOT_DIR_ID, _ = getDirID(GDRIVE_ROOT_DIR)
+		GDRIVE_ROOT_DIR_ID, _ = GetDirID(GDRIVE_ROOT_DIR)
 		maxRetryTimes := 3
 		for err := error(nil); nil == err && "" == GDRIVE_ROOT_DIR_ID; maxRetryTimes-- {
-			GDRIVE_ROOT_DIR_ID, err = makeDir(GDRIVE_ROOT_DIR)
+			GDRIVE_ROOT_DIR_ID, err = MakeDir(GDRIVE_ROOT_DIR)
 			time.Sleep(time.Second)
 		}
 		if "" == GDRIVE_ROOT_DIR_ID {
