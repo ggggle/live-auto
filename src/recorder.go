@@ -6,6 +6,7 @@ import (
 	"github.com/hr3lxphr6j/bililive-go/src/lib/utils"
 	"github.com/sirupsen/logrus"
 	"net/url"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -101,7 +102,11 @@ func (self *Recorder) run() {
 				"cb_code": cb_t.Code,
 			}).Debug("download return")
 			self.doUpload(live_file_path)
-			if WRITE_ERROR == cb_t.Code {
+			switch cb_t.Code {
+			case LIVE_STREAM_NIL:
+				os.Remove(live_file_path)
+				continue
+			case WRITE_ERROR:
 				self.Loop = false
 			}
 			if self.Loop {

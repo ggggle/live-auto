@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+	"time"
 )
 
 type DownloadCBCodeType int
@@ -16,6 +17,7 @@ const (
 	NEXT_PIECE                            // 单片段达到大小上限
 	UNSTART_ERROR
 	STOP_SELF // 主动停止
+	LIVE_STREAM_NIL
 )
 
 type downloader struct {
@@ -47,7 +49,7 @@ func NewDownloader(url, filePath string) *downloader {
 	return nil
 }
 
-func (self *downloader) Start() bool {
+func (self *downloader) Start() {
 	download_cb := downloadCB_t{
 		Code: NORMAL_END,
 	}
@@ -62,7 +64,7 @@ func (self *downloader) Start() bool {
 			"url":             self.url,
 		}).Error("下载错误")
 		download_cb.Code = UNSTART_ERROR
-		return false
+		return
 	}
 	defer resp.Body.Close()
 	f_handle, err := createFile(self.liveFilePath)
@@ -72,7 +74,7 @@ func (self *downloader) Start() bool {
 			"file_path":       self.liveFilePath,
 		}).Error("创建本地文件错误")
 		download_cb.Code = UNSTART_ERROR
-		return false
+		return
 	}
 	defer f_handle.Close()
 	buffer := make([]byte, bytes.MinRead)
@@ -115,10 +117,16 @@ func (self *downloader) Start() bool {
 		once_end <- struct{}{}
 	}()
 	<-once_end
+	if f_info, _ := f_handle.Stat(); 0 == f_info.Size() {
+		// 开直播了但是还没有流
+		time.Sleep(time.Second * 5)
+		download_cb.Code = LIVE_STREAM_NIL
+		return
+	}
 	Logger.WithFields(logrus.Fields{
 		"file_path": self.liveFilePath,
 	}).Debug("once_end")
-	return true
+	return
 }
 
 func httpDownload(url string) (resp *http.Response, err error) {
