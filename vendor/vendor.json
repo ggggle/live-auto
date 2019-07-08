@@ -34,6 +34,12 @@
 			"revisionTime": "2017-07-03T01:00:42Z"
 		},
 		{
+			"checksumSHA1": "Z7rkupTQRAZzzTCqDLiSbNR70to=",
+			"path": "github.com/konsorten/go-windows-terminal-sequences",
+			"revision": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e",
+			"revisionTime": "2019-02-26T22:47:05Z"
+		},
+		{
 			"checksumSHA1": "LUioeH9tTSKHQ18VYEvInovIyas=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/mozillazg/request",
 			"path": "github.com/mozillazg/request",
@@ -97,6 +103,12 @@
 			"revisionTime": "2019-06-24T00:38:29Z"
 		},
 		{
+			"checksumSHA1": "1WPd+f4EllXTdU4kefcCSeafSLs=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "839c75faf7f98a33d445d181f3018b5c3409a45e",
+			"revisionTime": "2019-05-18T10:38:48Z"
+		},
+		{
 			"checksumSHA1": "LqV02zbEQS4Bzr975PkImR5exCU=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/tidwall/gjson",
 			"path": "github.com/tidwall/gjson",
@@ -123,6 +135,12 @@
 			"path": "golang.org/x/net/publicsuffix",
 			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
 			"revisionTime": "2019-06-24T00:38:29Z"
+		},
+		{
+			"checksumSHA1": "a8iYhPjtQqoNL1lkLUeOZJUM5fA=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "3b5209105503162ded1863c307ac66fec31120dd",
+			"revisionTime": "2019-02-09T17:16:25Z"
 		},
 		{
 			"checksumSHA1": "pSRJpgNXXmuUf88IhYYNhM+crAU=",
