@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	src.LoadCfgRecorder()
 	cmd()
 }
 
@@ -41,21 +42,23 @@ func add() {
 	if nil != err {
 		return
 	}
-	recorder, err := src.NewRecorder(live_url, src.RecordConfig{
-		Loop:            true,
-		AutoRemove:      true,
-		EnableUploaders: []src.UploaderType{src.GDRIVE},
-	})
-	if nil != err {
-		fmt.Println(err)
-		return
-	}
-	err = src.GetIRecorderMngr().AddRecorder(recorder)
-	if nil != err {
-		fmt.Println(err)
-		return
-	}
-	recorder.Start()
+	go func() {
+		recorder, err := src.NewRecorder(live_url, src.RecordConfig{
+			Loop:            true,
+			AutoRemove:      true,
+			EnableUploaders: []src.UploaderType{src.GDRIVE},
+		})
+		if nil != err {
+			fmt.Println(err)
+			return
+		}
+		err = src.GetIRecorderMngr().AddRecorder(recorder)
+		if nil != err {
+			fmt.Println(err)
+			return
+		}
+		recorder.Start()
+	}()
 }
 
 func remove() {

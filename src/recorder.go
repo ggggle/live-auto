@@ -44,7 +44,13 @@ func NewRecorder(live_url string, config RecordConfig) (*Recorder, error) {
 		stop:         make(chan struct{}, 1),
 		Uploaders:    make([]Uploader, 0),
 	}
+	filter_tmp_map := make(map[UploaderType]bool)
 	for _, _type := range recorder.EnableUploaders {
+		// 去重，防止传入重复uploader
+		if _, exist := filter_tmp_map[_type]; exist {
+			continue
+		}
+		filter_tmp_map[_type] = true
 		recorder.Uploaders = append(recorder.Uploaders, NewUploader(_type, &recorder))
 	}
 	Logger.WithFields(logrus.Fields{

@@ -1,8 +1,9 @@
 package src
 
 const (
-	GDRIVE  UploaderType = iota // gdrive网盘
-	YOUTUBE                     // youtube
+	GDRIVE UploaderType = iota // gdrive网盘
+	MAX_SUPPORT_UPLOADER
+	YOUTUBE // youtube
 )
 
 type UploaderType int
