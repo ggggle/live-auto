@@ -6,26 +6,26 @@
 			"checksumSHA1": "HH2/aYk2z7YEcNSZBwYTaQEPPq8=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/bitly/go-simplejson",
 			"path": "github.com/bitly/go-simplejson",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
-			"checksumSHA1": "TtrgGcHymd16MO+IeDt+EwBht4c=",
+			"checksumSHA1": "crae6G7BlYWrkQK1xuuFDUh0+us=",
 			"path": "github.com/hr3lxphr6j/bililive-go/src/api",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
-			"checksumSHA1": "cB3hWQfl36uuCi+Tf9whVdi8nhs=",
+			"checksumSHA1": "XU/R8KZqbJKt5B+TT9NljLu+BN0=",
 			"path": "github.com/hr3lxphr6j/bililive-go/src/lib/http",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "zwxmT01X5FmOLppulx2wIBembSs=",
 			"path": "github.com/hr3lxphr6j/bililive-go/src/lib/utils",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "XXlwAxGFM9Mbn9R84DyGybMsHjY=",
@@ -43,64 +43,64 @@
 			"checksumSHA1": "LUioeH9tTSKHQ18VYEvInovIyas=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/mozillazg/request",
 			"path": "github.com/mozillazg/request",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "ow73Ky0YHQisASkKFU4ZozzOdZo=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/robertkrimen/otto",
 			"path": "github.com/robertkrimen/otto",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "DI3E8krQAWTt9bTc2WINIfPiUPk=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/robertkrimen/otto/ast",
 			"path": "github.com/robertkrimen/otto/ast",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "Ih8IyrcvYIRe1H1BbExbHs+s8kM=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/robertkrimen/otto/dbg",
 			"path": "github.com/robertkrimen/otto/dbg",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "FnQzQouypvp1tUyPE3mYbWNH6es=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/robertkrimen/otto/file",
 			"path": "github.com/robertkrimen/otto/file",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "8i/xiaG4391FtscX4HHN4RvXalY=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/robertkrimen/otto/parser",
 			"path": "github.com/robertkrimen/otto/parser",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "i9dRdlVYwqPt0PTRnJS6GxKoCRw=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/robertkrimen/otto/registry",
 			"path": "github.com/robertkrimen/otto/registry",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "KJp6P0GEODVBpNGqY8Scn+Q/0lg=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/robertkrimen/otto/token",
 			"path": "github.com/robertkrimen/otto/token",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "3JBPxvZn52LORHX9F382xpkt1sA=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/satori/go.uuid",
 			"path": "github.com/satori/go.uuid",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "1WPd+f4EllXTdU4kefcCSeafSLs=",
@@ -112,32 +112,32 @@
 			"checksumSHA1": "LqV02zbEQS4Bzr975PkImR5exCU=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/tidwall/gjson",
 			"path": "github.com/tidwall/gjson",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "gEpdu1QrdYgZVliuH3JhGph9TQY=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/github.com/tidwall/match",
 			"path": "github.com/tidwall/match",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "vRsiAquqGF6acraetJXhJ70g07Y=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/golang.org/x/net/proxy",
 			"path": "golang.org/x/net/proxy",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "tEFyfVImOh12BDg5SPxbmjlrGRY=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/golang.org/x/net/publicsuffix",
 			"path": "golang.org/x/net/publicsuffix",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
-			"checksumSHA1": "a8iYhPjtQqoNL1lkLUeOZJUM5fA=",
+			"checksumSHA1": "25eWuZl9nc6J3+a1fJochJPLhZM=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "3b5209105503162ded1863c307ac66fec31120dd",
 			"revisionTime": "2019-02-09T17:16:25Z"
@@ -146,15 +146,15 @@
 			"checksumSHA1": "pSRJpgNXXmuUf88IhYYNhM+crAU=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/gopkg.in/sourcemap.v1",
 			"path": "gopkg.in/sourcemap.v1",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		},
 		{
 			"checksumSHA1": "QTUPNivWNIxDv91cgj4V4p6xXFA=",
 			"origin": "github.com/hr3lxphr6j/bililive-go/vendor/gopkg.in/sourcemap.v1/base64vlq",
 			"path": "gopkg.in/sourcemap.v1/base64vlq",
-			"revision": "604443eb0c066d486ff75efe324b3f286fcccf53",
-			"revisionTime": "2019-06-24T00:38:29Z"
+			"revision": "9f101f7c9f07beb2b6441ab2262e3d5dbf50339a",
+			"revisionTime": "2019-10-08T07:21:25Z"
 		}
 	],
 	"rootPath": "live-auto"

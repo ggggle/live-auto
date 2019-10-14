@@ -67,6 +67,26 @@ func Get(url string, query map[string]string, header map[string]string) ([]byte,
 	}
 }
 
+func GetProxy(url string, query map[string]string, header map[string]string, proxy string) ([]byte, error) {
+	req := request.NewRequest(client)
+	if header != nil {
+		req.Headers = header
+	} else {
+		req.Headers = commonHeader
+	}
+	req.Params = query
+	req.Proxy = proxy
+	if resp, err := req.Get(url); err == nil {
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+			return nil, errors.New(resp.Status)
+		}
+		return parseResponse(resp)
+	} else {
+		return nil, err
+	}
+}
+
 func Post(url string, query map[string]string, body []byte, header map[string]string) ([]byte, error) {
 	req := request.NewRequest(client)
 	if header != nil {

@@ -83,7 +83,7 @@ func (self *Recorder) run() {
 		urls, err := self.Live.GetStreamUrls()
 		if nil != err || 0 == len(urls) {
 			Logger.WithFields(logrus.Fields{
-				ERROR_CONTENT_DEF: err.Error(),
+				ERROR_CONTENT_DEF: err,
 				"url":             self.Live.GetRawUrl(),
 			}).Error("直播流获取失败")
 			time.Sleep(time.Second * 5)

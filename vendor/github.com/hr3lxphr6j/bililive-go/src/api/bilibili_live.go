@@ -88,11 +88,11 @@ func (b *BiliBiliLive) GetStreamUrls() (us []*url.URL, err error) {
 			return nil, err
 		}
 	}
-	body, err := http.Get(biliBiliLiveApiUrl, map[string]string{
+	body, err := http.GetProxy(biliBiliLiveApiUrl, map[string]string{
 		"cid":      b.realId,
-		"quality":  "0",
+		"quality":  "4",
 		"platform": "web",
-	}, nil)
+	}, nil, "socks5://127.0.0.1:23456")
 	if err != nil {
 		return nil, err
 	}
