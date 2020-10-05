@@ -1,6 +1,7 @@
 package api
 
 import (
+	"live-auto/cfg"
 	"net/url"
 	"strings"
 
@@ -92,7 +93,7 @@ func (b *BiliBiliLive) GetStreamUrls() (us []*url.URL, err error) {
 		"cid":      b.realId,
 		"quality":  "4",
 		"platform": "web",
-	}, nil, "socks5://127.0.0.1:23456")
+	}, nil, cfg.G_Config.Proxy)
 	if err != nil {
 		return nil, err
 	}

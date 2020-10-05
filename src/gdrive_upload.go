@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"live-auto/cfg"
 	"os"
 	"os/exec"
 	"strings"
@@ -11,8 +12,8 @@ import (
 )
 
 var (
-	GDRIVE_ROOT_DIR    = "LiveAuto" // 所有上传所在根目录
-	GDRIVE_ROOT_DIR_ID = ""         // 查询出来的根目录ID
+	GDRIVE_ROOT_DIR       = "LiveAuto" // 所有上传所在根目录
+	GDRIVE_ROOT_DIR_ID    = ""         // 查询出来的根目录ID
 )
 
 const MIN_UPLOAD_FILE_SIZE int64 = 1024 * 256 // 最小上传大小
@@ -23,78 +24,42 @@ type GDriveUploader struct {
 }
 
 func (self *GDriveUploader) DoUpload(file_path string) {
-	if "" == GDRIVE_ROOT_DIR_ID {
-		return
-	}
-	if "" == self.parentDirID {
-		dirName := self.generateDirName()
-		self.parentDirID, _ = GetDirID(dirName)
-		// 创建目录重试次数
-		maxRetryTimes := 3
-		for err := error(nil); nil == err && "" == self.parentDirID && maxRetryTimes > 0; maxRetryTimes-- {
-			// 在ROOT目录基础上创建子目录
-			self.parentDirID, err = MakeDir(dirName, GDRIVE_ROOT_DIR_ID)
-			time.Sleep(time.Second)
-		}
-	}
-	// 或者直接上传至根目录里？
-	if "" == self.parentDirID {
-		return
-	}
 	if file_info, err := os.Stat(file_path); nil != err || file_info.Size() < MIN_UPLOAD_FILE_SIZE {
 		return
 	}
+	mv_dir := cfg.G_Config.RcloneMountDirPath + self.generateDirName()
 	Logger.WithFields(logrus.Fields{
 		"file_path": file_path,
 	}).Info("gdrive开始上传")
 	for uploadRetryTimes := 5; uploadRetryTimes >= 0; uploadRetryTimes-- {
-		uploadArgs := []string{"upload", "-p", self.parentDirID}
-		if self.Recorder.AutoRemove {
-			uploadArgs = append(uploadArgs, "--delete")
-		}
-		uploadArgs = append(uploadArgs, file_path)
-		cmd := exec.Command("gdrive", uploadArgs...)
+		mkdir_args := []string{"-p", mv_dir}
+		mkdir_cmd := exec.Command("mkdir", mkdir_args...)
+		mkdir_cmd.Run()
+		uploadArgs := []string{file_path, mv_dir}
+		cmd := exec.Command("mv", uploadArgs...)
 		stdout := bytes.NewBuffer(nil)
 		stderr := bytes.NewBuffer(nil)
 		cmd.Stdout = stdout
 		cmd.Stderr = stderr
 		err := cmd.Run()
-		if nil != err && err.Error() != "exit status 1" {
+		if nil != err {
 			Logger.WithFields(logrus.Fields{
 				ERROR_CONTENT_DEF: err.Error(),
 				"stderr":          stderr.String(),
 			}).Error("gdrive上传命令执行异常")
 			return
-		}
-		uploadRet := string(stdout.Bytes())
-		logEntry := Logger.WithFields(logrus.Fields{
-			"return":     uploadRet,
-			"left_times": uploadRetryTimes,
-		})
-		// 上传成功
-		if strings.Contains(uploadRet, "Uploaded") {
-			logEntry.Info("gdrive上传成功")
-			break
 		} else {
-			if 0 == uploadRetryTimes {
-				logEntry.WithFields(logrus.Fields{
-					"args": strings.Join(uploadArgs, ""),
-				}).Info("gdrive上传重试截止")
-				return
-			}
-			logEntry.Info("gdrive上传失败，稍后重试")
-			select {
-			case <-time.After(3 * time.Minute):
-			}
+			break
 		}
 	}
 }
 
 func (self *GDriveUploader) generateDirName() string {
 	// 平台-主播名
-	return fmt.Sprintf("%s-%s",
+	return fmt.Sprintf("%s-%s/%s/",
 		self.Recorder.Live.GetPlatformCNName(),
-		self.Recorder.Live.GetCachedInfo().HostName)
+		self.Recorder.Live.GetCachedInfo().HostName,
+		time.Now().Format("2006-01"))
 }
 
 func GetDirID(dir_name string) (dir_id string, err error) {
@@ -170,19 +135,4 @@ func MakeDir(dir_name string, parent_id ...string) (dir_id string, err error) {
 
 func InitGDrive() {
 	// 查询应用根目录ID
-	go func() {
-		GDRIVE_ROOT_DIR_ID, _ = GetDirID(GDRIVE_ROOT_DIR)
-		maxRetryTimes := 3
-		for err := error(nil); nil == err && "" == GDRIVE_ROOT_DIR_ID; maxRetryTimes-- {
-			GDRIVE_ROOT_DIR_ID, err = MakeDir(GDRIVE_ROOT_DIR)
-			time.Sleep(time.Second)
-		}
-		if "" == GDRIVE_ROOT_DIR_ID {
-			Logger.Info("gdrive根目录ID获取失败，上传功能将不生效")
-		} else {
-			Logger.WithFields(logrus.Fields{
-				"GDRIVE_DIR_ID": GDRIVE_ROOT_DIR_ID,
-			}).Info("gdrive根目录ID获取成功")
-		}
-	}()
 }

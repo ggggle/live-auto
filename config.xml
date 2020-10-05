@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-  <piece_size des="单个文件大小，单位MB，0不限制">2048</piece_size>
-  <proxy des="代理设置">http://127.0.0.1:10801</proxy>
+  <piece_size des="单个文件大小，单位MB，0不限制">4096</piece_size>
+  <proxy des="代理设置">socks5://127.0.0.1:28736</proxy>
   <check_interval des="默认检测间隔，单位秒">15</check_interval>
   <out_put_dir_path des="输出目录">./</out_put_dir_path>
+  <rclone_mount_dir des="rclone mount目录">./</rclone_mount_dir>
   <record_rules>
     <rule>
       <urls des="监控urls,多个url用;分割"></urls>

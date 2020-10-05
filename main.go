@@ -3,11 +3,55 @@ package main
 import (
 	"fmt"
 	"github.com/hr3lxphr6j/bililive-go/src/api"
+	"github.com/sirupsen/logrus"
+	"live-auto/cfg"
 	"live-auto/src"
+	"strconv"
+	"strings"
 )
 
+// 加载xml配置文件中的
+func LoadCfgRecorder() {
+	for _, rule := range cfg.G_Config.RecordRules.Rules {
+		url_split := strings.Split(rule.Urls, ";")
+		if 0 == len(url_split) {
+			continue
+		}
+		rcd_cfg := src.RecordConfig{
+			Loop:            rule.Loop,
+			AutoRemove:      rule.EnableUploaders.AutoRemove,
+			EnableUploaders: make([]src.UploaderType, 0),
+		}
+		uploader_split := strings.Split(rule.EnableUploaders.Uploaders, ";")
+		for _, uploader := range uploader_split {
+			if tmp_num, err := strconv.Atoi(uploader); nil == err && tmp_num < int(src.MAX_SUPPORT_UPLOADER) {
+				rcd_cfg.EnableUploaders = append(rcd_cfg.EnableUploaders, src.UploaderType(tmp_num))
+			}
+		}
+		for _, v := range url_split {
+			go func(url string) {
+				recorder, err := src.NewRecorder(url, rcd_cfg)
+				if nil != err {
+					src.Logger.WithFields(logrus.Fields{
+						src.ERROR_CONTENT_DEF: err.Error(),
+						"url":                 url,
+					}).Warn("初始化recorder出错")
+					return
+				}
+				if err = src.GetIRecorderMngr().AddRecorder(recorder); nil != err {
+					src.Logger.WithFields(logrus.Fields{
+						src.ERROR_CONTENT_DEF: err.Error(),
+					}).Warn("初始化添加recorder出错")
+					return
+				}
+				recorder.Start()
+			}(v)
+		}
+	}
+}
+
 func main() {
-	src.LoadCfgRecorder()
+	LoadCfgRecorder()
 	cmd()
 }
 

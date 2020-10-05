@@ -5,6 +5,7 @@ import (
 	"github.com/hr3lxphr6j/bililive-go/src/api"
 	"github.com/hr3lxphr6j/bililive-go/src/lib/utils"
 	"github.com/sirupsen/logrus"
+	"live-auto/cfg"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -76,7 +77,7 @@ func (self *Recorder) run() {
 		info, err := self.Live.GetInfo()
 		if nil != err || !info.Status {
 			// 未开播
-			time.Sleep(time.Duration(G_Config.CheckInterval) * time.Second)
+			time.Sleep(time.Duration(cfg.G_Config.CheckInterval) * time.Second)
 			continue
 		}
 		// 开播后获取直播流
@@ -94,11 +95,13 @@ func (self *Recorder) run() {
 			hostName       = utils.ReplaceIllegalChar(self.Live.GetCachedInfo().HostName)
 			roomName       = utils.ReplaceIllegalChar(self.Live.GetCachedInfo().RoomName)
 			fileName       = fmt.Sprintf("[%s][%s][%s].flv", time.Now().Format("2006-01-02 15-04-05"), hostName, roomName)
-			outputPath     = filepath.Join(G_Config.OutPutDirPath, platformName, hostName)
+			outputPath     = filepath.Join(cfg.G_Config.OutPutDirPath, platformName, hostName)
 			live_file_path = filepath.Join(outputPath, fileName)
 			live_url       = urls[0]
 		)
-		Logger.WithFields(self.Live.GetInfoMap()).Info("直播开始录制")
+		info_map := self.Live.GetInfoMap()
+		info_map["url"] = live_url.String()
+		Logger.WithFields(info_map).Info("直播开始录制")
 		downloader := NewDownloader(live_url.String(), live_file_path)
 		go downloader.Start()
 	SELECT:

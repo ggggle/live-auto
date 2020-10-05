@@ -2,11 +2,12 @@ package src
 
 import (
 	"fmt"
+	"live-auto/cfg"
 	"os"
 )
 
 func init() {
-	if err := ReadConfig("./config.xml"); nil != err {
+	if err := cfg.ReadConfig("./config.xml"); nil != err {
 		fmt.Printf("配置文件./config.xml读取错误[%s]\n", err.Error())
 		os.Exit(-1)
 	}

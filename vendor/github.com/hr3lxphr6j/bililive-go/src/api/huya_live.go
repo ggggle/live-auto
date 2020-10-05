@@ -1,7 +1,10 @@
 package api
 
 import (
+	"encoding/base64"
+	"errors"
 	"fmt"
+	"html"
 	"math/rand"
 	"net/url"
 	"regexp"
@@ -51,10 +54,22 @@ func (h *HuYaLive) GetStreamUrls() (us []*url.URL, err error) {
 	if err != nil {
 		return nil, err
 	}
-	sStreamName := regexp.MustCompile(`"sStreamName":"([^"]*)"`).FindStringSubmatch(string(dom))[1]
-	sFlvUrl := strings.Replace(regexp.MustCompile(`"sFlvUrl":"([^"]*)"`).FindStringSubmatch(string(dom))[1], `\/`, `/`, -1)
-	sFlvAntiCode := regexp.MustCompile(`"sFlvAntiCode":"([^"]*)"`).FindStringSubmatch(string(dom))[1]
-	iLineIndex := regexp.MustCompile(`"iLineIndex":(\d*),`).FindStringSubmatch(string(dom))[1]
+
+	// Decode stream part.
+	streamInfo := regexp.MustCompile(`"stream": "(.*?)"`).FindStringSubmatch(string(dom))[1]
+	if streamInfo == "" {
+		return nil, errors.New("find stream error")
+	}
+	streamByte, err := base64.StdEncoding.DecodeString(streamInfo)
+	if err != nil {
+		return nil, err
+	}
+	streamStr := html.UnescapeString(string(streamByte))
+
+	sStreamName := regexp.MustCompile(`"sStreamName":"([^"]*)"`).FindStringSubmatch(streamStr)[1]
+	sFlvUrl := strings.ReplaceAll(regexp.MustCompile(`"sFlvUrl":"([^"]*)"`).FindStringSubmatch(streamStr)[1], `\/`, `/`)
+	sFlvAntiCode := regexp.MustCompile(`"sFlvAntiCode":"([^"]*)"`).FindStringSubmatch(streamStr)[1]
+	iLineIndex := regexp.MustCompile(`"iLineIndex":(\d*),`).FindStringSubmatch(streamStr)[1]
 	uid := (time.Now().Unix()%1e7*1e6 + int64(1e3*rand.Float64())) % 4294967295
 	u, err := url.Parse(fmt.Sprintf("%s/%s.flv", sFlvUrl, sStreamName))
 	if err != nil {
@@ -66,6 +81,6 @@ func (h *HuYaLive) GetStreamUrls() (us []*url.URL, err error) {
 	value.Add("type", "web")
 	value.Add("ver", "1805071653")
 	value.Add("uid", fmt.Sprintf("%d", uid))
-	u.RawQuery = fmt.Sprintf("%s&%s", value.Encode(), strings.ReplaceAll(sFlvAntiCode, "&amp;", "&"))
+	u.RawQuery = fmt.Sprintf("%s&%s", value.Encode(), html.UnescapeString(sFlvAntiCode))
 	return []*url.URL{u}, nil
 }

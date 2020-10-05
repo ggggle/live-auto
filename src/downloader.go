@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/sirupsen/logrus"
 	"io"
+	"live-auto/cfg"
 	"net/http"
 	"time"
 )
@@ -91,8 +92,8 @@ func (self *downloader) Start() {
 					download_cb.Code = WRITE_ERROR
 					break
 				}
-				if G_Config.PieceSize > 0 {
-					if file_info, _ := f_handle.Stat(); file_info.Size() >= G_Config.PieceSize {
+				if cfg.G_Config.PieceSize > 0 {
+					if file_info, _ := f_handle.Stat(); file_info.Size() >= cfg.G_Config.PieceSize {
 						Logger.WithFields(logrus.Fields{
 							"file_size": file_info.Size(),
 						}).Info("切片存储")
