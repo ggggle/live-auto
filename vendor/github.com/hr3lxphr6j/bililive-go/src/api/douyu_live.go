@@ -220,7 +220,7 @@ func (d *DouyuLive) getSignParams() (url.Values, error) {
 		return nil, err
 	}
 	values := url.Values{
-		"cdn":  {"ws-h5"},
+		"cdn":  {""},
 		"iar":  {"0"},
 		"ive":  {"0"},
 		"rate": {"0"},

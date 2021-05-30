@@ -4,10 +4,19 @@ import (
 	"fmt"
 	"github.com/hr3lxphr6j/bililive-go/src/api"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"live-auto/cfg"
 	"live-auto/src"
+	"os"
 	"strconv"
 	"strings"
+	"time"
+)
+
+var (
+	app        = kingpin.New("live-auto", "live-auto")
+	Backend    = app.Flag("backend", "backend run").Bool()
+	ConfigFile = app.Flag("config", "config path").Short('c').Default("./config.xml").String()
 )
 
 // 加载xml配置文件中的
@@ -51,8 +60,19 @@ func LoadCfgRecorder() {
 }
 
 func main() {
+	app.Parse(os.Args[1:])
+	if err := cfg.ReadConfig(*ConfigFile); nil != err {
+		fmt.Printf("配置文件[%s]读取错误[%s]\n", *ConfigFile, err.Error())
+		os.Exit(-1)
+	}
 	LoadCfgRecorder()
-	cmd()
+	if *Backend {
+		for {
+			time.Sleep(time.Second)
+		}
+	} else {
+		cmd()
+	}
 }
 
 func cmd() {

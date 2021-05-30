@@ -62,8 +62,10 @@ func NewRecorder(live_url string, config RecordConfig) (*Recorder, error) {
 }
 
 func (self *Recorder) Start() {
-	go self.run()
-	Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Start")
+	for self.Loop {
+		Logger.WithFields(self.Live.GetInfoMap()).Info("Record Monitor Start")
+		self.run()
+	}
 }
 
 func (self *Recorder) Stop() {
@@ -73,6 +75,13 @@ func (self *Recorder) Stop() {
 }
 
 func (self *Recorder) run() {
+	defer func() {
+		if err := recover(); nil != err {
+			Logger.WithFields(logrus.Fields{
+				ERROR_CONTENT_DEF:err,
+			}).Error("panic error")
+		}
+	}()
 	for {
 		info, err := self.Live.GetInfo()
 		if nil != err || !info.Status {

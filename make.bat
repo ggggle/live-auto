@@ -1,4 +1,5 @@
 @echo off
 set GOOS=linux
-set GOARCH=amd64
+set GOARCH=arm64
+set GOPATH=I:\go
 go build -ldflags "-extldflags '-static'"
